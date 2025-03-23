@@ -76,7 +76,7 @@ const Dashboard = () => {
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
       }`}
     >
-      {/*  Bar Chart Section */}
+      {/* 📊 Bar Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div
           className={`p-6 rounded-lg shadow-md ${
@@ -103,7 +103,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/*  Weekly Summary Table */}
+        {/* 📋 Weekly Summary Table */}
         <div
           className={`p-6 rounded-lg shadow-md ${
             darkMode ? "bg-gray-800" : "bg-white"
