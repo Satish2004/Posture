@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "userId": "user1",
+    "timestamp": "2023-10-01T08:00:00Z",
+    "postureType": "Good",
+    "duration": 300,
+    "label": "Monday",
+    "value": 100,
+    "sitting time": 100
+  },
+  {
+    "id": 2,
+    "userId": "user1",
+    "timestamp": "2023-10-01T08:05:00Z",
+    "postureType": "Slouching",
+    "duration": 150,
+    "label": "Tuesday",
+    "value": 100,
+    "sitting time": 100
+  },
+  {
+    "id": 3,
+    "userId": "user2",
+    "timestamp": "2023-10-01T08:00:00Z",
+    "postureType": "Leaning Forward",
+    "duration": 200,
+    "label": "Wednesday",
+    "value": 100,
+    "sitting time": 100
+  },
+  {
+    "id": 4,
+    "userId": "user2",
+    "timestamp": "2023-10-01T08:03:20Z",
+    "postureType": "Good",
+    "duration": 400,
+    "label": "Thursday",
+    "value": 100,
+    "sitting time": 100
+  },
+  {
+    "id": 5,
+    "userId": "user3",
+    "timestamp": "2023-10-01T08:00:00Z",
+    "postureType": "Leaning Backward",
+    "duration": 100,
+    "label": "Friday",
+    "value": 100,
+    "sitting time": 100
+  },
+  {
+    "id": 6,
+    "userId": "user4",
+    "timestamp": "2023-10-01T08:01:40Z",
+    "postureType": "Good",
+    "duration": 250,
+    "label": "Saturday",
+    "value": 100,
+    "sitting time": 100
+  },
+  {
+    "id": 7,
+    "userId": "user5",
+    "timestamp": "2023-10-01T08:01:40Z",
+    "postureType": "Good",
+    "duration": 250,
+    "label": "Sunday",
+    "value": 100,
+    "sitting time": 100
+  }
+]
