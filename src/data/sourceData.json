@@ -6,7 +6,7 @@
     "postureType": "Good",
     "duration": 300,
     "label": "Monday",
-    "value": 100,
+    "value": 10,
     "sitting time": 100
   },
   {
@@ -16,7 +16,7 @@
     "postureType": "Slouching",
     "duration": 150,
     "label": "Tuesday",
-    "value": 100,
+    "value": 89,
     "sitting time": 100
   },
   {
@@ -66,7 +66,7 @@
     "postureType": "Good",
     "duration": 250,
     "label": "Sunday",
-    "value": 100,
-    "sitting time": 100
+    "value": 50,
+    "sitting time": 0
   }
 ]

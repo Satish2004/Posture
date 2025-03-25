@@ -1,0 +1,21 @@
+[
+  { "day": "Monday", "tip": "Take a break every 30 minutes", "version": "1.0" },
+  { "day": "Tuesday", "tip": "Sit up straight", "version": "1.0" },
+  {
+    "day": "Wednesday",
+    "tip": "Stretch your body every hour",
+    "version": "1.0"
+  },
+  {
+    "day": "Thursday",
+    "tip": "Keep your monitor at eye level",
+    "version": "1.0"
+  },
+  { "day": "Friday", "tip": "Stay hydrated", "version": "1.0" },
+  { "day": "Saturday", "tip": "Use a comfortable chair", "version": "1.0" },
+  {
+    "day": "Sunday",
+    "tip": "Exercise to strengthen your back",
+    "version": "1.0"
+  }
+]

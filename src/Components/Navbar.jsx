@@ -1,203 +1,179 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "../App";
-import { motion, AnimatePresence } from "framer-motion";
+import { Chart as ChartJS } from "chart.js/auto";
+import { Bar } from "react-chartjs-2";
+import SourceData from "../data/sourceData.json";
+import TipsData from "../data/tips.json";
+import ScrollVelocity from "./Animations/ScrollVelocity";
+import Masonry from "./Animations/Masonry";
 
-import gsap from "gsap";
+const Dashboard = () => {
+  const data = [
+    { id: 1, image: "https://picsum.photos/id/10/200/300", height: 400 },
+    { id: 2, image: "https://picsum.photos/id/14/200/300", height: 300 },
+    { id: 3, image: "https://picsum.photos/id/15/200/300", height: 300 },
+    { id: 4, image: "https://picsum.photos/id/16/200/300", height: 300 },
+    { id: 5, image: "https://picsum.photos/id/17/200/300", height: 300 },
+    { id: 6, image: "https://picsum.photos/id/19/200/300", height: 300 },
+    { id: 7, image: "https://picsum.photos/id/37/200/300", height: 200 },
+    { id: 8, image: "https://picsum.photos/id/39/200/300", height: 300 },
+    { id: 9, image: "https://picsum.photos/id/85/200/300", height: 200 },
+    { id: 10, image: "https://picsum.photos/id/103/200/300", height: 400 },
+  ];
 
-const Navbar = () => {
-  const { darkMode, setDarkMode } = useTheme();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const nav1ref = useRef(null);
-  const nav2ref = useRef(null);
-  const nav3ref = useRef(null);
-  const nav4ref = useRef(null);
-  const nav5ref = useRef(null);
-  
+  const { darkMode } = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [totalScore, setTotalScore] = useState(0);
+  const [todayScore, setTodayScore] = useState(0);
+  const [totalSittingTime, setTotalSittingTime] = useState(0);
+  const [totalAlerts, setTotalAlerts] = useState(0);
+  const [dailyTip, setDailyTip] = useState("");
+  const [velocity, setVelocity] = useState(80);
 
   useEffect(() => {
-    gsap.fromTo(
-      nav1ref.current,
-      { opacity: 0, y: -90 },
-      { opacity: 1, y: 0, duration: 1.5 }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    const groupedData = {};
+    let totalSum = 0;
+    let sittingTimeSum = 0;
+    let badPostureCount = 0;
+    let today = new Date().toLocaleString("en-US", { weekday: "long" });
+    let todayTotal = 0;
+
+    SourceData.forEach((data) => {
+      const { label, postureType, value, ["sitting time"]: sittingTime } = data;
+
+      if (!groupedData[label]) {
+        groupedData[label] = { totalScore: 0, sittingTime: 0, alerts: 0 };
+      }
+
+      groupedData[label].totalScore += value;
+      groupedData[label].sittingTime += sittingTime;
+
+      if (postureType !== "Good") {
+        groupedData[label].alerts += 1;
+        badPostureCount += 1;
+      }
+
+      if (label === today) {
+        todayTotal += value;
+      }
+
+      totalSum += value;
+      sittingTimeSum += sittingTime;
+    });
+
+    const formattedData = Object.keys(groupedData).map((day) => ({
+      day,
+      totalScore: Math.min(100, groupedData[day].totalScore.toFixed(1)),
+      sittingTime: groupedData[day].sittingTime,
+      alerts: groupedData[day].alerts,
+    }));
+
+    setWeeklyData(formattedData);
+    setTotalScore(Math.min(100, ((totalSum / 7) * 100) / 100));
+    setTodayScore(Math.min(100, todayTotal));
+    setTotalSittingTime(sittingTimeSum);
+    setTotalAlerts(badPostureCount);
+
+    const todayTip = TipsData.find((tip) => tip.day === today);
+    setDailyTip(
+      todayTip ? todayTip.tip : "Maintain a good posture throughout the day!"
     );
   }, []);
-  useEffect(() => {
-    gsap.fromTo(
-      nav2ref.current,
-      { opacity: 0, y: -90 },
-      { opacity: 1, y: 0, duration: 1.7 }
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-gray-900 text-white">
+        <div className="w-16 h-16 border-4 border-gray-400 border-t-white rounded-full animate-spin"></div>
+        <p className="mt-4 text-lg font-semibold">Loading Dashboard...</p>
+      </div>
     );
-  }, []);
-  useEffect(() => {
-    gsap.fromTo(
-      nav3ref.current,
-      { opacity: 0, y: -90 },
-      { opacity: 1, y: 0, duration: 1.9 }
-    );
-  }, []);
-  useEffect(() => {
-    gsap.fromTo(
-      nav4ref.current,
-      { opacity: 0, y: -90 },
-      { opacity: 1, y: 0, duration: 2.1 }
-    );
-  }, []);
-  useEffect(() => {
-    gsap.fromTo(
-      nav5ref.current,
-      { opacity: 0, y: -90 },
-      { opacity: 1, y: 0, duration: 2.3 }
-    );
-  }, []);
+  }
 
   return (
     <div
-      className={darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}
+      className={`px-4 py-6 space-y-8 max-w-7xl mx-auto ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      }`}
     >
-      <motion.nav
-        // initial={{ y: -50, opacity: 0 }}
-        // animate={{ y: 0, opacity: 1 }}
-        // transition={{ duration: 0.5 }}
-        className={`p-4 flex justify-between items-center ${
-          darkMode
-            ? "bg-gray-800 shadow-lg backdrop-blur-md p-6 sticky"
-            : "border shadow-lg backdrop-blur-md p-6 bg-blue-300 text-white sticky"
-        }`}
-      >
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-xl"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      {/* Weekly Bar Chart */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 p-4 rounded-lg">
+        <div
+          className={`p-6 rounded-lg shadow-md ${
+            darkMode ? "bg-gray-800" : "bg-white"
+          }`}
         >
-          <motion.i
-            animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-            className={`fa-solid ${isMobileMenuOpen ? "fa-xmark" : "fa-bars"}`}
-          ></motion.i>
-        </button>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex space-x-4">
-          <a
-            ref={nav1ref}
-            href="/check-device-health"
-            className="hover:underline"
-          >
-            Check Device Health
-          </a>
-          <a
-            ref={nav2ref}
-            href="/all-user-profiles"
-            className="hover:underline"
-          >
-            All User Profiles
-          </a>
-          <a ref={nav3ref} href="/report" className="hover:underline">
-            Report
-          </a>
-          <a ref={nav4ref} href="/exercise" className="hover:underline">
-            Exercise
-          </a>
-          <a ref={nav5ref} href="/my-plans" className="hover:underline">
-            My Plans
-          </a>
+          <h2 className="text-xl font-semibold">Weekly Posture Score</h2>
+          <div className="w-full h-64">
+            <Bar
+              data={{
+                labels: weeklyData.map((item) => item.day),
+                datasets: [
+                  {
+                    label: "Posture Score",
+                    data: weeklyData.map((item) => item.totalScore),
+                    backgroundColor: "rgba(75, 192, 192, 0.5)",
+                    borderWidth: 1,
+                    borderRadius: 10,
+                  },
+                ],
+              }}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
+          </div>
         </div>
 
-        {/* Light/Dark Mode Toggle */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setDarkMode(!darkMode)}
-          className="hidden md:block px-4 py-2 rounded-md"
+        {/* Weekly Summary Table */}
+        <div
+          className={`p-6 rounded-lg shadow-md ${
+            darkMode ? "bg-gray-800" : "bg-white"
+          }`}
         >
-          {darkMode ? (
-            <motion.i
-              animate={{ rotate: 180 }}
-              transition={{ duration: 0.5 }}
-              className="fa-solid fa-sun"
-            ></motion.i>
-          ) : (
-            <motion.i
-              animate={{ rotate: -180 }}
-              transition={{ duration: 0.5 }}
-              className="fa-solid fa-moon"
-            ></motion.i>
-          )}
-        </motion.button>
-      </motion.nav>
+          <h2 className="text-xl font-semibold">Weekly Report</h2>
+          <table className="w-full border-collapse border border-gray-500 mt-4 text-sm md:text-base">
+            <thead>
+              <tr className="bg-gray-700 text-white">
+                <th className="border px-2 py-1 md:px-4 md:py-2">Day</th>
+                <th className="border px-2 py-1 md:px-4 md:py-2">Score</th>
+                <th className="border px-2 py-1 md:px-4 md:py-2">
+                  Sitting Time
+                </th>
+                <th className="border px-2 py-1 md:px-4 md:py-2">Alerts</th>
+              </tr>
+            </thead>
+            <tbody>
+              {weeklyData.map((item, index) => (
+                <tr key={index} className="text-center">
+                  <td className="border px-2 py-1 md:px-4 md:py-2">
+                    {item.day}
+                  </td>
+                  <td className="border px-2 py-1 md:px-4 md:py-2">
+                    {item.totalScore}
+                  </td>
+                  <td className="border px-2 py-1 md:px-4 md:py-2">
+                    {item.sittingTime} min
+                  </td>
+                  <td className="border px-2 py-1 md:px-4 md:py-2">
+                    {item.alerts}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      {/* Mobile Sidebar Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            exit={{ x: -300 }}
-            transition={{ duration: 0.3 }}
-            className={`fixed top-0 left-0 w-64 h-screen ${
-              darkMode ? "bg-black text-white" : "bg-white text-black"
-            } shadow-lg p-6 z-50 flex flex-col items-center`}
-          >
-            {/* Profile Section on Top */}
-            <div className="flex flex-col items-center mt-4">
-              <img
-                src="https://source.boomplaymusic.com/group10/M00/09/03/8597676cf4a24310b1487c01f0be4ed6H3000W3000_464_464.jpg"
-                alt="User Profile"
-                className="w-16 h-16 rounded-full border-2 border-gray-600"
-              />
-              <h2 className="mt-2 text-lg font-bold">John</h2>
-            </div>
-
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute top-4 right-4 text-xl"
-            >
-              ✖
-            </button>
-            <div className="mt-6 space-y-4 flex flex-col items-center justify-between ">
-              <a href="/check-device-health" className="hover:underline">
-                Check Device Health
-              </a>
-              <a href="/all-user-profiles" className="hover:underline">
-                All User Profiles
-              </a>
-              <a href="/report" className="hover:underline">
-                Report
-              </a>
-              <a href="/exercise" className="hover:underline">
-                Exercise
-              </a>
-              <a href="/my-plans" className="hover:underline">
-                My Plans
-              </a>
-              {/* Light/Dark Mode Toggle inside Sidebar */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setDarkMode(!darkMode)}
-                className="mt-4 px-4 py-2 rounded-md"
-              >
-                {darkMode ? (
-                  <motion.i
-                    animate={{ rotate: 180 }}
-                    transition={{ duration: 0.5 }}
-                    className="fa-solid fa-sun"
-                  ></motion.i>
-                ) : (
-                  <motion.i
-                    animate={{ rotate: -180 }}
-                    transition={{ duration: 0.5 }}
-                    className="fa-solid fa-moon"
-                  ></motion.i>
-                )}
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Masonry Layout */}
+      <h2 className="text-center mt-20 text-lg md:text-xl">
+        🚫 Wrong Postures
+      </h2>
+      <Masonry data={data} />
     </div>
   );
 };
 
-export default Navbar;
+export default Dashboard;
